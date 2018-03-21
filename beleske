@@ -1,0 +1,34 @@
+*******************************************************
+**************  BELESKE   NODE JS  ********************
+*******************************************************
+
+res.   - to je response
+
+modul  -  ovo je u sustini isto sto i biblioteka,  inkluduje se sa require('./imeModula')
+
+treba mi request i response...
+
+REPL:  
+		Read − Reads user's input, parses the input into JavaScript data-structure, and stores in memory.
+
+		Eval − Takes and evaluates the data structure.
+
+		Print − Prints the result.
+
+		Loop − Loops the above command until the user presses ctrl-c twice
+
+
+Kao neka konzola, real time node u konzoli
+
+***********************************************
+
+npm - node package manager
+
+***********************************************
+Callback - asinhroni ekvivalent funkciji
+
+
+***********************************************
+***********************************************
+***********************************************
+***********************************************

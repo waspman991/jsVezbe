@@ -1,0 +1,343 @@
+Understanding WEIRD PARTS JS
+
+
+
+syntax parsers, executin contexts and lexical environments
+
+
+SYNTAX PARSER:
+cita kod i gleda da li je ispravan
+
+Lexical envoironment:
+gde je napisano i cime je okruzeno
+
+executin context:
+wrapper - menadzerise koji lexical environment je trenutan
+
+
+***************************************
+NAME/VALUE PAIRS AND OBJECTS
+
+NAME/VALUE PAIRS - ime ima smao jednu vrednost u nekom kontekstu
+
+value - moze da bude neka druga kolekcija name.value parova
+
+	primer:
+	Adress = 'ulica 101'
+
+OBJEKAT - kolekcija name/value parova
+
+Name
+	Name
+		Name/Value
+		Name/Value
+		Name/Value
+	Name
+		Name/Value
+		Name/Value
+		Name/Value
+
+primer:
+
+Adress:
+	{
+		Street: 'Main',
+		Number:100
+		Apartment:
+			{
+				Floor:3,
+				Number:301
+			}
+	}
+
+Ovo je dovoljno za razumevanje koncepta objekta!!!
+
+
+*****************************************************************
+THE GLOBAL ENVIRONMENT AND THE GLOBAL  OBJECT
+
+Global - bazni execution context - accessible anywhere
+
+	Global Object    i posebna varijabla  'this'
+
+
+udjem u devTools f12 i kucam this
+
+to kreira kontekst iako nema koda
+
+global object je window ako runujemo u browseru... isti djavo kao i this object u browseru
+
+
+Global - Not inside the function - sve sot nije u funkciji
+
+-------------------------------------------------------
+--Global object ------- this----- oouter environment---
+-------------------------------------------------------
+------------------------Your code----------------------
+-------------------------------------------------------
+
+
+
+*****************************************************************
+EXECUTION CONTEXT:    CREATION AND HOISTING
+
+Poziva funkciju bez obzira sto variabla nije definisana pre nje, prikaze je kao undefined
+
+KAd se poziva funkcija BEZ DEFINICIJE PROMENLJIVE BILO GDE  onda javlja eror
+
+
+						To se zove HOISTING!!!
+
+
+Ovo da su variable i objekti dostupni cak i ako su kasnije u kodu definisani omoguceno je zbog
+dve faze exection contexta
+
+CREATION PHASE
+	global obj(postavlja se u memoriju)    
+	this(isto u memoriju)    
+	outer environment
+
+Postavlja se memorijsko mesto za varijable i funkcije i omogucava se hoisting
+
+
+PRE NEGO se kod krene izvrsavati liniju po liniju js engine setuje memoriju za varijable tako da one postoje u memoriji
+i kad se kod krene izvrsavati moze da im pristupi
+
+
+zasto UNDEFINED -- to je samo placeholder jer sustinski, postavlja se mesto u memoriji za promenljivu 'a',  ali se ne zna njena vrednost
+i zato stoji undefined
+SVE PROMENLJIVE SU SETOVANE KAO UNDEFINED INICIJALNO
+
+
+*****************************************************************
+conceptual aside - JS AND UNDEFINED
+
+undefined - placeholder, posebna vrednost
+
+not defined - variabla NE POSTOJI UOPSTE
+
+
+moze se promenljivoj dodeliti vrednost undefined, ali nije dobra praksa
+
+najbolje je da je to indikator za
+
+NISAM POSTAVIO VREDNOST PROMENLJIVE!!!  to pomaze u debuggingu
+
+
+*****************************************************************
+THE ECEXUTION CONTEXT:  CODE EXECUTION
+
+ovde se kod izvrsava liniju po liniju
+
+
+*****************************************************************
+CA:  SINGLE THREADED, SYNCHRONOUS EXECUTION
+
+single thread - jedna komanda po jedna
+
+	js se ponasa koa single threaded
+
+synchronous - znaci one at a time, znaci jedna linija koda se izvrsava
+
+*****************************************************************
+01:00:00
+	FUNCTION EVOCATION AND EXECUTION STACK
+
+Invocation - poziv funkcije
+	u js se to radi sa zagradama,npr: 
+		 ime();
+
+
+execution stack - jedan na drugom, oni koji su na vrhu su oni koji su trenutno pokrenuti
+
+svaka funkcija kreira execution context, ona na vrhu se trenutno izvrsava, ako je jedna u drugoj ona ide na vrh
+
+tipa 
+
+	function b() {
+
+	}
+
+	function a() {
+		b();
+	}
+
+Ovde je b iznad a.
+
+ kad se izvrsi, skine se sa steka
+
+
+*****************************************************************
+FUNCTIONS, CONTEXTS AND VARIABLE ENVIRONMENTS
+
+variable environment - gde se nalaze i kako se odnose
+
+primer sa pozivanjem funkcija i execution stackom gde je u posednjoj pozvanoj f-ji vrednost undefined jer nije definisana, vrednost se menja u toku vremena
+
+svaka variabla ima svoj execution context
+
+
+
+*****************************************************************
+THE SCOPE CHAIN
+isti primer sa funkcijama sa var=1 var=2 i var
+
+b ispisuje var, ali se b poziva iz a funkcije, a var je definisana globlano kao 1
+
+zakljucak: ako u funkciji var nije definisana, ispisuje ono definisano globalno
+tj. IMA REFERENCU NA SPOLJASNJE OKRUZENJE
+
+ako joj fali vrednost u trenutnom okruzenju, potrazice je u spoljnom okruzneju medju promenljivama na istom nivou u kom je njeno okruzenje
+
+b funkcija je definisana gde i globlana pro,menljiva, i onda ce traziti var u globalnom okruzenju
+
+to je ustvari SCOPE CHAIN, gleda leksicko okruzenje, tj gde je sta definisano
+
+*****************************************************************
+SCOPE - gde je variabla dostupna u tvom kodu
+
+acme script - ima let, umesto var, to moze da se koristi al ne menja var kompletno
+
+ako koristis npr let c, dok se ta linija ne izvrsi, ta promenljiva NE POSTOJI, NIJE DOSTUPNA, javlja error a ne undefined
+
+
+*****************************************************************
+asinhroni callback
+
+asinhoroni - vise od jednog u istom momentu
+js - po prirodi je sinhorn
+
+ali moze da hendluje asinhrono
+
+
+execution stack - event queue - lista eventova koji trebaj uda se odigraju
+
+taj event queue se uvek na kraju gleda od strane programa, odrade se funkcije redom i svi konteksti i onda se tek gleda event queue redom
+
+*****************************************************************
+ca: Types in JS
+Dynamic typing - ne kazes js-u koji je tip varijable a on sam skonta kakav je to tip dok ranuje kod
+za razliku od statickog tipa koji je zakucan i ponasa se uvek isto:
+
+	static typing
+		bool isNew = 'hello' // ovo baca gresku jer je bool-u dodeljen string
+
+	Dynamic typing
+		var isNew = true;
+		isNew= 'yup!';
+		isNew = 1;
+
+
+
+PRIMITIVNI TIPOVI - njih 6
+
+ovo je tip koji prikazuje jednoznacnu vrednost, znaci NIJE OBJEKAT
+
+	1)undefined - lack of existence, placeholder - kod nije setovao vrednost
+	
+	2)NULL - ne postoji, lack of existence
+	
+	3)boolean - true ili false
+
+	4)number - jedini numericki tip, floating point, uvek ima decimale, mozes ga zeznuti da je integer tj da izlgeda tako al uvek ima decimale
+
+	5)STring - sekvenca karaktera
+
+	6)SYMBOL - koristi se u ES6
+
+
+*****************************************************************
+ca: problemi sa dinamickim tipovima
+
+Operator - specijalna funkcija koja je sintaksno drugacija, generalno uzima dva parametra i vraca jedan rezultat
+
+tipa + je operator, i ima infix notaciju znaci da moze biti izmedju dva parametra, a ne kao prefix notacija da bude pre njih
+
+kod < >  vraca boolean
+
+
+OPERATOR PRECEDENCE AND ASSOCIATIVITY
+
+OPERATOR PRECEDENCE - koja ffunkcija operatora se poziva prva, precedence ciji je veci ta se prva izvrsava
+
+associativity - kojim redom se operatori pozivaju, s leva ili s desna itd.  KAD IMAJU ISTI PRECEDENCE
+
+3+4*5 - znaci * ima veci precedence od +   a js prvo radi jedan pa drugi jer je sinhron jezik
+
+a=1. b=2, c=4
+a=b=c - asocijativnost kaze da su svi 4
+
+
+
+*****************************************************************
+ca: COERCION
+
+kao kastovanje :D 
+oces broj u string ili string u broj i slicno
+
+1 + '2' je 12 - sta se desilo?  pa 1 je kastovan (coerced) u string, js engine to radi stalno
+
+
+*****************************************************************
+COMAPRISON OPERATOR
+
+1<2<3 je true
+
+ali
+
+3<2<1 je isto true   KAKO?
+
+pa 3<2 daje false
+
+a false <1  jeste true
+
+sve je u asocijativnosti!
+
+
+u konzoli  Number(udefined)  daje NaN - Not an Number
+
+
+Number (null)  daje 0
+
+Ovo moze da napravi problem ako ne kontas sta se desava jer ta konverzija tipa  moze da zezne nesto
+
+---
+
+3==3 daje true
+
+"3" == 3 isto true jer dolazi do koercije
+
+zato se koristi === to je striktno equal i onda je "3"===3 false
+
+
+
+
+
+*****************************************************************
+EXISTENCE AND BOOLEANS
+
+undefined, null i ""  je false .. .sve sto je lack of existence
+
+
+
+*****************************************************************
+DEFAULT VALUES
+
+ kad funkciji ne prosledis parametar, nju boli uvo, tretira to kao undefined
+
+ali je problem kad imas "hello" + name i name je undefined i radi se coercion u string 
+
+
+or - ako imas dve vrednosti koje vracaju true ili false, vrac onu sa true, ili koja moze da bude coerced u true
+
+undefined || 'hello'  - true
+
+0 || 'hello'  - true
+
+name = name + '<your name here'
+
+ako prosledimo ime koje nije undefined dobijamo ispis tog imena, jer onda name nije undefined i nema sta da bude coerced
+
+
+STAO SAM KOD 2:58:00
+*****************************************************************
